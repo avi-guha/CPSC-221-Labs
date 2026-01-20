@@ -1,17 +1,17 @@
 CPP_FILES = $(wildcard *.cpp) lodepng/lodepng.cpp
-OBJ_FILES = $(notdir $(CPP_FILES:.cpp=.o))
-CXX = clang++
+OBJ_FILES = $(CPP_FILES:.cpp=.o)
+CXX = g++
 
-CXXFLAGS = -std=c++1y -stdlib=libc++ -c -g -O0 -Wall -Wextra -pedantic
-LDFLAGS = -std=c++1y -stdlib=libc++ -lc++abi -lpthread -lm
+CXXFLAGS = -std=c++1y -c -g -O0 -Wall -Wextra -pedantic
+LDFLAGS = -std=c++1y -lpthread -lm
 
 
 all: $(OBJ_FILES)
 
-%.o: %.cpp %.h
+%.o: %.cpp
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 clean:
-	rm -f *.o
+	del /Q *.o 2>nul
 
 .PHONY: all clean
