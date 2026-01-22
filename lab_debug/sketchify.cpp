@@ -50,14 +50,12 @@ double edgeScore(PNG* im, unsigned x, unsigned y) {
 
 void sketchify(std::string inputFile, std::string outputFile) {
     // Load in.png
-    PNG* original = new PNG();
+    PNG* original = NULL;
 
-    cout << "reached line 54" <<endl; 
     original->readFromFile(inputFile);
     unsigned width = original->width();
     unsigned height = original->height();
-    cout << "reached line 58" <<endl; 
-    
+
     // Create out.png
     PNG* output = setupOutput(width, height);
 
