@@ -45,7 +45,7 @@ PNG grayscale(PNG image) {
       
       double grayvalue = adjusted_red + adjusted_green + adjusted_blue;
 
-      pixel -> r = (unsigned char) grayvalue;
+      pixel -> r = (unsigned char) grayvalue; // access, dereference, and set the values
       pixel -> g = (unsigned char) grayvalue;
       pixel -> b = (unsigned char) grayvalue;
     }
