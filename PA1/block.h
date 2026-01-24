@@ -23,7 +23,7 @@ class Block {
 		 * in img. Assumes img is large enough to supply these pixels.
 		**/
 		void Build(PNG &img, int x, int y, int dimension);
-
+		
 		/**
 		 * Renders the given block onto img with its upper
 		 * left corner at (x, y). Assumes the rendered block fits on the 
