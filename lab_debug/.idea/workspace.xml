@@ -17,18 +17,7 @@
     </generated>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f3b9920b-a400-44fd-9001-9e19f54cf460" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/coverage.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cs221util/PNG.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cs221util/RGBAPixel.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cs221util/lodepng/lodepng.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/default.profraw" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/sketchify" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/sketchify.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/testsketchify.o" beforeDir="false" />
-    </list>
+    <list default="true" id="f3b9920b-a400-44fd-9001-9e19f54cf460" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -67,10 +56,10 @@
       </map>
     </option>
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 0
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 0
+}</component>
   <component name="ProjectId" id="38gHOyQ5QYgsPPIHmCrsL3vlSX2" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -81,6 +70,7 @@
     "RunOnceActivity.RadMigrateCodeStyle": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.readMode.enableVisualFormatting": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "cf.first.check.clang-format": "false",
@@ -126,6 +116,7 @@
       <updated>1769214237300</updated>
       <workItem from="1769214239023" duration="14000" />
       <workItem from="1769214268079" duration="4000" />
+      <workItem from="1769396724195" duration="15000" />
     </task>
     <servers />
   </component>
