@@ -68,12 +68,14 @@ void delete_last_element(Node *&head)
     {
         if (size(curr) == 1)
         {
+            delete head;
             head = NULL;
             return;
         }
 
         if (curr->next->next == NULL)
         {
+            delete curr->next;
             curr->next = NULL;
             return;
         }
@@ -96,7 +98,9 @@ void remove(Node *&head, int oldKey)
 
     if (head->key == oldKey)
     {
+        Node *temp = head;
         head = head->next;
+        delete temp;
         return;
     }
 
@@ -108,6 +112,7 @@ void remove(Node *&head, int oldKey)
         if (curr->key == oldKey)
         {
             prev->next = curr->next;
+            delete curr;
             return;
         }
         prev = curr;
