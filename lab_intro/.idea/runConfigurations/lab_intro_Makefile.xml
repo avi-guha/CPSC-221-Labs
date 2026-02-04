@@ -1,0 +1,12 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="lab_intro" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile">
+    <makefile filename="$PROJECT_DIR$/Makefile" target="all" workingDirectory="$PROJECT_DIR$" arguments="">
+      <envs />
+    </makefile>
+    <ExecPath>$PROJECT_DIR$/lab_intro.exe</ExecPath>
+    <WorkingDirectory>$PROJECT_DIR$</WorkingDirectory>
+    <method v="2">
+      <option name="MAKEFILE_BEFORE_RUN_TARGET_OPTION" value="TRUE" enabled="true" />
+    </method>
+  </configuration>
+</component>
