@@ -27,7 +27,23 @@
 **/
 Chain::Chain(PNG& imIn, int numCols) {
     /* your code here */
+    NW = NULL;
+    roworder = true;
+    columns_ = numCols;
 
+    int blockDim = imIn.width() / numCols;
+    rows_ = imIn.height() / blockDim;
+
+    Node* curr = NULL;
+
+    // Build chain in row order
+    for (int row = 0; row < rows_; row++) {
+        for (int col = 0; col < columns_; col++) {
+            Block b;
+            b.Build(imIn, col * blockDim, row * blockDim, blockDim);
+            curr = InsertAfter(curr, b);
+        }
+    }
 }
 
 /**
@@ -36,7 +52,7 @@ Chain::Chain(PNG& imIn, int numCols) {
 **/
 Chain::~Chain() {
 	/* your code here */
-    
+    Clear();
 }
 
 /**
@@ -51,7 +67,19 @@ Chain::~Chain() {
 **/
 Node* Chain::InsertAfter(Node* p, const Block &ndata) {
 	/* your code here */
-	return nullptr;
+    Node* newNode = new Node(ndata);
+
+    if (p == NULL) {
+        // Insert as head
+        newNode->next = NW;
+        NW = newNode;
+    } else {
+        // Insert after p
+        newNode->next = p->next;
+        p->next = newNode;
+    }
+
+    return newNode;
 }
 
 /**
@@ -60,7 +88,16 @@ Node* Chain::InsertAfter(Node* p, const Block &ndata) {
 **/
 void Chain::Clear() {
 	/* your code here */
-
+    Node* curr = NW;
+    while (curr != NULL) {
+        Node* temp = curr;
+        curr = curr->next;
+        delete temp;
+    }
+    NW = NULL;
+    rows_ = 0;
+    columns_ = 0;
+    roworder = true;
 }
 
 /**
@@ -72,7 +109,18 @@ void Chain::Clear() {
 **/
 void Chain::Copy(Chain const &other) {
 	/* your code here */
+    rows_ = other.rows_;
+    columns_ = other.columns_;
+    roworder = other.roworder;
+    NW = NULL;
 
+    Node* otherCurr = other.NW;
+    Node* curr = NULL;
+
+    while (otherCurr != NULL) {
+        curr = InsertAfter(curr, otherCurr->data);
+        otherCurr = otherCurr->next;
+    }
 }
 
 /**
@@ -84,8 +132,40 @@ void Chain::Copy(Chain const &other) {
  * @pre scale >= 1
 **/
 PNG Chain::Render(int scale) {
-    /* your code here */
-    return PNG();
+    if (NW == NULL) {
+        return PNG();
+    }
+
+    int blockDim = NW->data.Dimension();
+    int imgWidth = columns_ * blockDim * scale;
+    int imgHeight = rows_ * blockDim * scale;
+
+    PNG img(imgWidth, imgHeight);
+
+    Node* curr = NW;
+    int index = 0;
+
+    while (curr != NULL) {
+        int row, col;
+
+        if (roworder) {
+            row = index / columns_;
+            col = index % columns_;
+        } else {
+            col = index / rows_;
+            row = index % rows_;
+        }
+
+        int x = col * blockDim * scale;
+        int y = row * blockDim * scale;
+
+        curr->data.Render(img, x, y, scale);
+
+        curr = curr->next;
+        index++;
+    }
+
+    return img;
 }
 
 /**
@@ -97,7 +177,45 @@ PNG Chain::Render(int scale) {
 **/
 void Chain::ToRowOrder() {
     /* your code here */
+    if (roworder) {
+        return; // Already in row order
+    }
 
+    int total = Length();
+    if (total == 0) {
+        return;
+    }
+
+    // Create array of node pointers to hold all nodes
+    vector<Node*> nodes(total);
+    Node* curr = NW;
+    for (int i = 0; i < total; i++) {
+        nodes[i] = curr;
+        curr = curr->next;
+    }
+
+    // Reorder: currently in column order (col-major), convert to row order (row-major)
+    // Current column order: index = col * rows_ + row
+    // Target row order: index = row * columns_ + col
+
+    // Build new order
+    vector<Node*> newOrder(total);
+    for (int row = 0; row < rows_; row++) {
+        for (int col = 0; col < columns_; col++) {
+            int oldIndex = col * rows_ + row;  // column order index
+            int newIndex = row * columns_ + col;  // row order index
+            newOrder[newIndex] = nodes[oldIndex];
+        }
+    }
+
+    // Relink nodes
+    NW = newOrder[0];
+    for (int i = 0; i < total - 1; i++) {
+        newOrder[i]->next = newOrder[i + 1];
+    }
+    newOrder[total - 1]->next = NULL;
+
+    roworder = true;
 }
 
 /**
@@ -109,7 +227,45 @@ void Chain::ToRowOrder() {
 **/
 void Chain::ToColumnOrder() {
     /* your code here */
+    if (!roworder) {
+        return; // Already in column order
+    }
 
+    int total = Length();
+    if (total == 0) {
+        return;
+    }
+
+    // Create array of node pointers to hold all nodes
+    vector<Node*> nodes(total);
+    Node* curr = NW;
+    for (int i = 0; i < total; i++) {
+        nodes[i] = curr;
+        curr = curr->next;
+    }
+
+    // Reorder: currently in row order (row-major), convert to column order (col-major)
+    // Current row order: index = row * columns_ + col
+    // Target column order: index = col * rows_ + row
+
+    // Build new order
+    vector<Node*> newOrder(total);
+    for (int col = 0; col < columns_; col++) {
+        for (int row = 0; row < rows_; row++) {
+            int oldIndex = row * columns_ + col;  // row order index
+            int newIndex = col * rows_ + row;  // column order index
+            newOrder[newIndex] = nodes[oldIndex];
+        }
+    }
+
+    // Relink nodes
+    NW = newOrder[0];
+    for (int i = 0; i < total - 1; i++) {
+        newOrder[i]->next = newOrder[i + 1];
+    }
+    newOrder[total - 1]->next = NULL;
+
+    roworder = false;
 }
 
 /**
@@ -125,7 +281,80 @@ void Chain::ToColumnOrder() {
 **/
 void Chain::Transpose() {
     /* your code here */
+    if (NW == NULL) {
+        return;
+    }
 
+    // Transpose each individual block
+    Node* curr = NW;
+    while (curr != NULL) {
+        curr->data.Transpose();
+        curr = curr->next;
+    }
+
+    // Swap rows and columns
+    int temp = rows_;
+    rows_ = columns_;
+    columns_ = temp;
+
+    // Reorder the chain:
+    // If in row order, convert to column order, then mark as row order (transposed)
+    // If in column order, convert to row order, then mark as column order (transposed)
+
+    int total = Length();
+    if (total == 0) {
+        return;
+    }
+
+    // Create array of node pointers to hold all nodes
+    vector<Node*> nodes(total);
+    curr = NW;
+    for (int i = 0; i < total; i++) {
+        nodes[i] = curr;
+        curr = curr->next;
+    }
+
+    // Build new order for transpose
+    // Original position (r, c) -> transposed position (c, r)
+    // If originally row order: old_index = r * old_cols + c
+    // After transpose in row order: new_index = c * new_cols + r = c * old_rows + r
+
+    vector<Node*> newOrder(total);
+
+    if (roworder) {
+        // Was in row order, rearrange for transposed row order
+        int oldRows = columns_;  // after swap, columns_ was old rows_
+        int oldCols = rows_;     // after swap, rows_ was old columns_
+
+        for (int i = 0; i < total; i++) {
+            // Original position in old row order
+            int oldRow = i / oldCols;
+            int oldCol = i % oldCols;
+            // New position: (oldCol, oldRow) in new row order
+            int newIndex = oldCol * columns_ + oldRow;
+            newOrder[newIndex] = nodes[i];
+        }
+    } else {
+        // Was in column order, rearrange for transposed column order
+        int oldRows = columns_;  // after swap
+        int oldCols = rows_;     // after swap
+
+        for (int i = 0; i < total; i++) {
+            // Original position in old column order
+            int oldCol = i / oldRows;
+            int oldRow = i % oldRows;
+            // New position: (oldCol, oldRow) in new column order
+            int newIndex = oldRow * rows_ + oldCol;
+            newOrder[newIndex] = nodes[i];
+        }
+    }
+
+    // Relink nodes
+    NW = newOrder[0];
+    for (int i = 0; i < total - 1; i++) {
+        newOrder[i]->next = newOrder[i + 1];
+    }
+    newOrder[total - 1]->next = NULL;
 }
 
 /**************************************************
@@ -133,4 +362,36 @@ void Chain::Transpose() {
 * chain-private.h, COMPLETE THEIR IMPLEMENTATIONS *
 * HERE                                            *
 **************************************************/
+
+/**
+ * Returns the total number of nodes in the chain.
+ * @return number of nodes in the chain
+**/
+int Chain::Length() const {
+    int count = 0;
+    Node* curr = NW;
+    while (curr != NULL) {
+        count++;
+        curr = curr->next;
+    }
+    return count;
+}
+
+/**
+ * Returns a pointer to the node at the given index (0-based).
+ * @param index - the position in the chain (0-based)
+ * @return pointer to the node at index, or NULL if out of bounds
+**/
+Node* Chain::GetNodeAt(int index) const {
+    if (index < 0) {
+        return NULL;
+    }
+    Node* curr = NW;
+    int i = 0;
+    while (curr != NULL && i < index) {
+        curr = curr->next;
+        i++;
+    }
+    return curr;
+}
 

@@ -19,3 +19,16 @@
  * EVEN IF YOU DO NOT DECLARE ANYTHING
 **/
 
+/**
+ * Returns the total number of nodes in the chain.
+ * @return number of nodes in the chain
+**/
+int Length() const;
+
+/**
+ * Returns a pointer to the node at the given index (0-based).
+ * @param index - the position in the chain (0-based)
+ * @return pointer to the node at index, or NULL if out of bounds
+**/
+Node* GetNodeAt(int index) const;
+

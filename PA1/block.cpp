@@ -13,7 +13,7 @@
 **/
 int Block::Dimension() const {
 	/* your code here */
-	return 0;
+	return data.size();
 }
 
 /**
@@ -25,7 +25,18 @@ int Block::Dimension() const {
  * @pre scale >= 1
 **/
 void Block::Render(PNG& img, int x, int y, int scale) const {
-	/* your code here */
+	int dim = Dimension();
+    for (int i = 0; i < dim; i++) {
+        for (int j = 0; j < dim; j++) {
+            RGBAPixel pixel = data[i][j];
+            for (int a = 0; a < scale; a++) {
+                for (int b = 0; b < scale; b++) {
+                    RGBAPixel* imgPixel = img.getPixel(x + j * scale + b, y + i * scale + a);
+                    *imgPixel = pixel;
+                }
+            }
+        }
+    }
 
 }
 
@@ -35,8 +46,14 @@ void Block::Render(PNG& img, int x, int y, int scale) const {
  * in img. Assumes img is large enough to supply these pixels.
 **/
 void Block::Build(PNG& img, int x, int y, int dimension) {
-	/* your code here */
-
+    for (int i = 0; i < dimension; i++) {
+        vector<RGBAPixel> row;
+        for (int j = 0; j < dimension; j++) {
+            RGBAPixel* pixel = img.getPixel(x + j, y + i);
+            row.push_back(*pixel);
+        }
+        data.push_back(row);
+    }
 }
 
 /**
@@ -47,6 +64,13 @@ void Block::Build(PNG& img, int x, int y, int dimension) {
  *       7 8 9      3 6 9
 **/
 void Block::Transpose() {
-	/* your code here */
-
+    int dim = Dimension();
+    vector<vector<RGBAPixel>> transposedData(dim, vector<RGBAPixel>(dim));
+    for (int i = 0; i < dim; i++)
+    {
+        for (int j = 0; j < dim; j++) {
+            transposedData[j][i] = data[i][j];
+        }
+    }
+    data = transposedData;
 }
