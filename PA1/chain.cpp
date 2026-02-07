@@ -236,7 +236,7 @@ void Chain::ToColumnOrder() {
         return;
     }
 
-    // Create array of node pointers to hold all nodes
+    // array of node pointers holds all nodes
     vector<Node*> nodes(total);
     Node* curr = NW;
     for (int i = 0; i < total; i++) {
@@ -245,15 +245,12 @@ void Chain::ToColumnOrder() {
     }
 
     // Reorder: currently in row order (row-major), convert to column order (col-major)
-    // Current row order: index = row * columns_ + col
-    // Target column order: index = col * rows_ + row
 
-    // Build new order
     vector<Node*> newOrder(total);
     for (int col = 0; col < columns_; col++) {
         for (int row = 0; row < rows_; row++) {
-            int oldIndex = row * columns_ + col;  // row order index
-            int newIndex = col * rows_ + row;  // column order index
+            int oldIndex = row * columns_ + col;  
+            int newIndex = col * rows_ + row;  
             newOrder[newIndex] = nodes[oldIndex];
         }
     }
@@ -280,12 +277,12 @@ void Chain::ToColumnOrder() {
  *  C -> D                     B     D
 **/
 void Chain::Transpose() {
-    /* your code here */
+    
     if (NW == NULL) {
         return;
     }
 
-    // Transpose each individual block
+    
     Node* curr = NW;
     while (curr != NULL) {
         curr->data.Transpose();
@@ -297,16 +294,14 @@ void Chain::Transpose() {
     rows_ = columns_;
     columns_ = temp;
 
-    // Reorder the chain:
-    // If in row order, convert to column order, then mark as row order (transposed)
-    // If in column order, convert to row order, then mark as column order (transposed)
+    // Reorder the chain to match the transposed layout
 
     int total = Length();
     if (total == 0) {
         return;
     }
 
-    // Create array of node pointers to hold all nodes
+    // array of node pointers holds all nodes
     vector<Node*> nodes(total);
     curr = NW;
     for (int i = 0; i < total; i++) {
@@ -315,35 +310,30 @@ void Chain::Transpose() {
     }
 
     // Build new order for transpose
-    // Original position (r, c) -> transposed position (c, r)
-    // If originally row order: old_index = r * old_cols + c
-    // After transpose in row order: new_index = c * new_cols + r = c * old_rows + r
 
     vector<Node*> newOrder(total);
 
     if (roworder) {
         // Was in row order, rearrange for transposed row order
-        int oldRows = columns_;  // after swap, columns_ was old rows_
-        int oldCols = rows_;     // after swap, rows_ was old columns_
+        int oldRows = columns_;  
+        int oldCols = rows_;     
 
         for (int i = 0; i < total; i++) {
-            // Original position in old row order
             int oldRow = i / oldCols;
             int oldCol = i % oldCols;
-            // New position: (oldCol, oldRow) in new row order
             int newIndex = oldCol * columns_ + oldRow;
             newOrder[newIndex] = nodes[i];
         }
     } else {
-        // Was in column order, rearrange for transposed column order
-        int oldRows = columns_;  // after swap
-        int oldCols = rows_;     // after swap
+
+        int oldRows = columns_;  
+        int oldCols = rows_;     
 
         for (int i = 0; i < total; i++) {
-            // Original position in old column order
+
             int oldCol = i / oldRows;
             int oldRow = i % oldRows;
-            // New position: (oldCol, oldRow) in new column order
+
             int newIndex = oldRow * rows_ + oldCol;
             newOrder[newIndex] = nodes[i];
         }
