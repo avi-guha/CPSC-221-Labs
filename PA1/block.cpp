@@ -1,7 +1,7 @@
 /**
  * @file block.cpp
  * @description Student implementation of Block functions, CPSC 221 PA1
- * @author (your CWLs here)
+ * @author 60702594
 **/
 
 #include "block.h"

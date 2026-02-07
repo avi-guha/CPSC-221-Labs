@@ -1,7 +1,7 @@
 /**
  * @file chain-private.h
  * 
- * @author (your CWLs here)
+ * @author 60702594
  * 
  * If you want to define private member functions or attributes for Chain,
  * write the declarations below.

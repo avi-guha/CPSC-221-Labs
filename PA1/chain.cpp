@@ -1,7 +1,7 @@
 /**
  * @file chain.cpp
  * @description Student implementation of Chain functions, CPSC 221 PA1
- * @author (your CWLs here)
+ * @author 60702594
 **/
 
 #include "chain.h"
