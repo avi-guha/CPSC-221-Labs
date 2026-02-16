@@ -195,15 +195,13 @@ void Chain::ToRowOrder() {
     }
 
     // Reorder: currently in column order (col-major), convert to row order (row-major)
-    // Current column order: index = col * rows_ + row
-    // Target row order: index = row * columns_ + col
 
     // Build new order
     vector<Node*> newOrder(total);
     for (int row = 0; row < rows_; row++) {
         for (int col = 0; col < columns_; col++) {
-            int oldIndex = col * rows_ + row;  // column order index
-            int newIndex = row * columns_ + col;  // row order index
+            int oldIndex = col * rows_ + row;  
+            int newIndex = row * columns_ + col;  
             newOrder[newIndex] = nodes[oldIndex];
         }
     }
@@ -282,7 +280,7 @@ void Chain::Transpose() {
         return;
     }
 
-    
+    // Transpose each block
     Node* curr = NW;
     while (curr != NULL) {
         curr->data.Transpose();
@@ -294,57 +292,9 @@ void Chain::Transpose() {
     rows_ = columns_;
     columns_ = temp;
 
-    // Reorder the chain to match the transposed layout
-
-    int total = Length();
-    if (total == 0) {
-        return;
-    }
-
-    // array of node pointers holds all nodes
-    vector<Node*> nodes(total);
-    curr = NW;
-    for (int i = 0; i < total; i++) {
-        nodes[i] = curr;
-        curr = curr->next;
-    }
-
-    // Build new order for transpose
-
-    vector<Node*> newOrder(total);
-
-    if (roworder) {
-        // Was in row order, rearrange for transposed row order
-        int oldRows = columns_;  
-        int oldCols = rows_;     
-
-        for (int i = 0; i < total; i++) {
-            int oldRow = i / oldCols;
-            int oldCol = i % oldCols;
-            int newIndex = oldCol * columns_ + oldRow;
-            newOrder[newIndex] = nodes[i];
-        }
-    } else {
-
-        int oldRows = columns_;  
-        int oldCols = rows_;     
-
-        for (int i = 0; i < total; i++) {
-
-            int oldCol = i / oldRows;
-            int oldRow = i % oldRows;
-
-            int newIndex = oldRow * rows_ + oldCol;
-            newOrder[newIndex] = nodes[i];
-        }
-    }
-
-    // Relink nodes
-    NW = newOrder[0];
-    for (int i = 0; i < total - 1; i++) {
-        newOrder[i]->next = newOrder[i + 1];
-    }
-    newOrder[total - 1]->next = NULL;
+    // Toggle roworder: row order becomes column order and vice versa
+    // No reordering of nodes needed - the linear order is preserved
+    roworder = !roworder;
 }
 
 /**************************************************
