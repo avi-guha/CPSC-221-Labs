@@ -10,3 +10,11 @@
  * starting from line 220 of tritree.h
 **/
 
+void Clear(Node* node);
+Node* Copy(Node* node);
+void Render(const Node* node, PNG& img) const;
+void Transpose(Node* node);
+bool Prunable(const Node* node, RGBAPixel targetAvg, double tol) const;
+void Prune(Node* node, double tol);
+int NumLeaves(const Node* node) const;
+
