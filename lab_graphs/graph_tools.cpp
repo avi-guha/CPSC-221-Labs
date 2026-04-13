@@ -22,14 +22,17 @@
  */
 int GraphTools::findMinWeight(Graph& graph)
 {
-    // TODO
-    // 1. Label all edges and vertices as unexplored. You will need
-    //    to look in graph.h for the right functions.
+    vector<Vertex> vertices = graph.getVertices();
+    for (Vertex v : vertices)
+        graph.setVertexLabel(v, "UNEXPLORED");
 
-    // 2. Use the BFS function in graph_tools to find the minimum edge.
-    //    Don't forget to label it.
+    vector<Edge> edges = graph.getEdges();
+    for (const Edge& edge : edges)
+        graph.setEdgeLabel(edge.source, edge.dest, "UNEXPLORED");
 
-    return -1;
+    Edge min = BFS(graph, graph.getStartingVertex());
+    graph.setEdgeLabel(min.source, min.dest, "MIN");
+    return min.weight;
 }
 
 /**
@@ -56,17 +59,51 @@ int GraphTools::findShortestPath(Graph& graph, Vertex start, Vertex end)
 {
     unordered_map<Vertex, Vertex> parent;
 
-    // TODO
-    // 1. Set all vertices as unexplored
+    vector<Vertex> vertices = graph.getVertices();
+    for (Vertex v : vertices)
+        graph.setVertexLabel(v, "UNEXPLORED");
 
-    // 2. Do a modified BFS. See the BFS function below as a guideline, but
-    //    your BFS here only needs to populate the "parent" map and stop once the short-
-    //    est path has been found.
+    vector<Edge> edges = graph.getEdges();
+    for (const Edge& edge : edges)
+        graph.setEdgeLabel(edge.source, edge.dest, "UNEXPLORED");
 
-    // 3. Use the unordered map to trace from a path from the end to the start,
-    //    counting edges. You should set edges to "minpath" here too.
+    queue<Vertex> q;
+    graph.setVertexLabel(start, "VISITED");
+    q.push(start);
 
-    return -1;
+    bool found = (start == end);
+    while (!q.empty() && !found) {
+        Vertex current = q.front();
+        q.pop();
+
+        vector<Vertex> adjacent = graph.getAdjacent(current);
+        for (Vertex next : adjacent) {
+            if (graph.getVertexLabel(next) != "UNEXPLORED")
+                continue;
+
+            parent[next] = current;
+            graph.setVertexLabel(next, "VISITED");
+            graph.setEdgeLabel(current, next, "DISCOVERY");
+
+            if (next == end) {
+                found = true;
+                break;
+            }
+
+            q.push(next);
+        }
+    }
+
+    int distance = 0;
+    Vertex current = end;
+    while (current != start) {
+        Vertex previous = parent[current];
+        graph.setEdgeLabel(previous, current, "MINPATH");
+        current = previous;
+        ++distance;
+    }
+
+    return distance;
 }
 
 /**
@@ -84,7 +121,29 @@ int GraphTools::findShortestPath(Graph& graph, Vertex start, Vertex end)
  */
 void GraphTools::findMST(Graph& graph)
 {
-    // TODO
+    vector<Edge> edges = graph.getEdges();
+    for (const Edge& edge : edges)
+        graph.setEdgeLabel(edge.source, edge.dest, "UNEXPLORED");
+
+    vector<Vertex> vertices = graph.getVertices();
+    unordered_map<Vertex, int> indexByVertex;
+    indexByVertex.reserve(vertices.size());
+    for (size_t i = 0; i < vertices.size(); ++i)
+        indexByVertex[vertices[i]] = static_cast<int>(i);
+
+    DisjointSets sets;
+    sets.addelements(static_cast<int>(vertices.size()));
+
+    sort(edges.begin(), edges.end());
+    for (const Edge& edge : edges) {
+        int sourceSet = sets.find(indexByVertex[edge.source]);
+        int destSet = sets.find(indexByVertex[edge.dest]);
+        if (sourceSet == destSet)
+            continue;
+
+        sets.setunion(sourceSet, destSet);
+        graph.setEdgeLabel(edge.source, edge.dest, "MST");
+    }
 }
 
 /**

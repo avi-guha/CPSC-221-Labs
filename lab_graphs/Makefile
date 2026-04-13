@@ -1,5 +1,5 @@
-CXX = clang++
-LD = clang++
+CXX = g++
+LD = g++
 CXXFLAGS = -c -g -Og -std=c++14 -Wall -Wextra -pedantic -MP -MMD
 LDFLAGS = -std=c++14 -lpthread
 
